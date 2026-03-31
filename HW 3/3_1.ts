@@ -25,17 +25,27 @@ class PackedBCD extends BCD {
     if (num < 0n) {
       throw new Error('Число должно быть неотрицательным')
     }
-    const numToStr = num.toString()
-    this.length = Math.ceil(numToStr.length / 2)
+    const digits = []
+    if (num === 0) {
+      digits.push(0)
+    } else {
+      let n = num
+      while (n > 0) {
+        digits.push(Number(n) % 10)
+        n = Math.floor(Number(n) / 10)
+      }
+      digits.reverse()
+    }
+
+    this.length = Math.ceil(digits.length / 2)
 
     this.numArray = new Uint8Array(this.length)
 
-    for (let i = 0; i < numToStr.length; i++) {
-      const firstDigit = Number(numToStr[i * 2])
-      const secondDigit = Number(numToStr[i * 2 + 1])
-      this.numArray[i] = !Number.isNaN(secondDigit)
-        ? (firstDigit << 4) | secondDigit
-        : firstDigit
+    for (let i = 0; i < digits.length; i++) {
+      const firstDigit = digits[i * 2]
+      const secondDigit = digits[i * 2 + 1]
+      this.numArray[i] =
+        typeof secondDigit !== 'undefined' ? (firstDigit << 4) | secondDigit : firstDigit
     }
   }
 
@@ -55,22 +65,16 @@ class PackedBCD extends BCD {
   }
 
   toNumber(): number {
-    let result = ''
-    const binaryNumber = this.toString()
+    let result = []
 
-    for (let i = 0; i < binaryNumber.length; i += 8) {
-      const firstDigitBinary = binaryNumber.slice(i, i + 4)
-      const secondDigitBinary = binaryNumber.slice(i + 4, i + 8)
-      const firstDigit = parseInt(firstDigitBinary, 2)
-      const secondDigit = parseInt(secondDigitBinary, 2)
-
-      if (firstDigit == 0) {
-        result += secondDigit.toString()
-      } else {
-        result += firstDigit.toString() + secondDigit.toString()
+    for (let i = 0; i < this.numArray.byteLength; i++) {
+      if (Math.floor(Number(this.numArray[i]) / 10) != 0) {
+        result.push(this.numArray[i] >> 4)
       }
+      result.push(this.numArray[i] & 0b00001111)
     }
-    return Number(result)
+
+    return Number(result.join(''))
   }
 
   toString(): string {

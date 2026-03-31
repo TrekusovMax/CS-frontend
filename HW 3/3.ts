@@ -24,11 +24,21 @@ class MyBCD extends BCD {
     if (num < 0n) {
       throw new Error('Число должно быть неотрицательным')
     }
-    const numToStr = num.toString()
-    this.numArray = new Uint8Array(numToStr.length)
+    const digits = []
+    if (num === 0) {
+      digits.push(0)
+    } else {
+      let n = num
+      while (n > 0) {
+        digits.push(Number(n) % 10)
+        n = Math.floor(Number(n) / 10)
+      }
+      digits.reverse()
+    }
+    this.numArray = new Uint8Array(digits.length)
 
-    for (let i = 0; i < numToStr.length; i++) {
-      this.numArray[i] = Number(numToStr[i])
+    for (let i = 0; i < digits.length; i++) {
+      this.numArray[i] = digits[i]
     }
   }
 
