@@ -1,5 +1,7 @@
-const sizes = [10, 100, 1000, 100_000]
-const iterations = 100_000
+import { RingBuffer } from './RingBuffer.ts'
+
+export const sizes = [10, 100, 1000, 100_000]
+export const iterations = 100_000
 
 function pushBench(arr: number[]) {
   //PUSH
@@ -39,7 +41,7 @@ function shiftBench(arr: number[]) {
 }
 
 for (const size of sizes) {
-  const arr: number[] = new Array(size)
+  const arr: RingBuffer = new RingBuffer(size)
   const arr_holey: number[] = []
 
   for (let i = 0; i < size; i++) {
@@ -52,31 +54,31 @@ for (const size of sizes) {
 
   //прогрев
   for (let i = 0; i < size; i++) {
-    arr[i] = 0
+    arr._buffer[i] = 0
   }
 
-  const avarangeTimePush = pushBench(arr).toFixed(3)
+  const avarangeTimePush = pushBench(arr._buffer).toFixed(3)
   console.log(`Push operation for ${size} elements: ${avarangeTimePush}`)
 
   const avarangeTimePushHoley = pushBench(arr_holey).toFixed(3)
   console.log(`Push operation holey array for ${size} elements: ${avarangeTimePushHoley}`)
   console.log('------------------------------')
 
-  const avarangeTimePop = popBench(arr).toFixed(3)
+  const avarangeTimePop = popBench(arr._buffer).toFixed(3)
   console.log(`Pop operation for ${size} elements: ${avarangeTimePop}`)
 
   const avarangeTimePopHoley = popBench(arr_holey).toFixed(3)
   console.log(`Pop operation holey array for ${size} elements: ${avarangeTimePopHoley}`)
   console.log('------------------------------')
 
-  const avarangeTimeUnshift = unshiftBench(arr).toFixed(3)
+  const avarangeTimeUnshift = unshiftBench(arr._buffer).toFixed(3)
   console.log(`Unshift operation for ${size} elements: ${avarangeTimeUnshift}`)
 
   const avarangeTimeUnshiftHoley = unshiftBench(arr_holey).toFixed(3)
   console.log(`Unshift operation holey array for ${size} elements: ${avarangeTimeUnshiftHoley}`)
   console.log('------------------------------')
 
-  const avarangeTimeShift = unshiftBench(arr).toFixed(3)
+  const avarangeTimeShift = unshiftBench(arr._buffer).toFixed(3)
   console.log(`Shift operation for ${size} elements: ${avarangeTimeShift}`)
 
   const avarangeTimeShiftHoley = unshiftBench(arr_holey).toFixed(3)
