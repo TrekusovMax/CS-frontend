@@ -18,8 +18,8 @@ class StringBuffer {
     for (let i = 0; i < count; i++) {
       const byteLen = view.getUint32(pos, true)
       pos += 4
-      index[i * 2] = pos // dataOffset — предвычислен, как у меня
-      index[i * 2 + 1] = byteLen // byteLen    — предвычислен, как у меня
+      index[i * 2] = pos
+      index[i * 2 + 1] = byteLen
       pos += byteLen
     }
     this._index = index
@@ -62,8 +62,7 @@ class StringBuffer {
 
     const buffer = new ArrayBuffer(totalSize)
     const view = new DataView(buffer)
-    view.setUint32(0, count, true) // little-endian
-
+    view.setUint32(0, count, true)
     let pos = 4
     for (let i = 0; i < count; i++) {
       const bytes = encoded[i]
